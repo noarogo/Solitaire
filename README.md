@@ -18,3 +18,7 @@ and run using
 ```
 ./solitaire
 ```
+
+# To Do
+- Create a Stock object to separate unflipped cards from flipped cards and ensure a LIFO removal of flipped cards
+- Fix Stock card flipping to it goes to the proper pile (currently end up in Foundation piles)
