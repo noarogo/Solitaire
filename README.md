@@ -19,6 +19,7 @@ and run using
 ./solitaire
 ```
 The first display will contain D (deck) followed by the pile of unflipped stock cards, F followed by the empty foundation piles, and Tableau followed by labeled rows t = {1,2,3,4,5,6,7} containing t-1 unflipped cards followed by 1 flipped card.
+
 To move a card, enter its location label (D, 1, 2, 3, 4, 5, 6, or 7), then enter the destination label (1, 2, 3, 4, 5, 6, 7, or F). To flip a card from the stock, enter S. If the card move is not doable (the destination card is the wrong color or value, or the stock is empty), you will be prompted to try a new move. **When in doubt, flip it out (of the stock)!**
 
 # To Do
