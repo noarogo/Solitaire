@@ -17,11 +17,24 @@ struct Tableau {
   int numInvCards;
 };
 
-struct Card deck[56], stock[28], f[4];
+struct Stock {
+  struct Card pile[24];
+  struct Card flipped[24];
+  int pileCards;
+  int flipCards;
+};
+
+struct Card deck[52], f[4];
 struct Tableau tab1, tab2, tab3, tab4, tab5, tab6, tab7;
+struct Stock stock;
 
 void display(){
-  printf("Deck: [ %s ]", stock[0].name);
+  printf("D: ");
+  if(stock.pileCards > 0){ printf("[  ]"); }
+  else { printf("[ empty ]"); }
+  if(stock.flipCards > 0){ printf("[ %s ]", stock.flipped[stock.flipCards-1].name); }
+  else { printf("\t\t"); }
+
   printf("\t\tF: [ %s ][ %s ][ %s ][ %s ]", f[0].name, f[1].name, f[2].name, f[3].name);
   printf("\nTableau:");
   printf("\n1: ");
@@ -117,7 +130,7 @@ void game(){
 
     //test if move is possible
     if(from == 'S' || from == 'D') {
-      if(strcmp(stock[0].name, " ") == 0)
+      if(stock.pileCards == 0)
         good = false;
     } else if(from == '1') {
       if(tab1.numCards <= 0)
@@ -148,13 +161,13 @@ void game(){
     }
 
     //start move
-    if(from == 'S' || from == 'D'){
-      hold = stock[0];
-      for(int i = 0; i < 27; i++){
-        stock[i] = stock[i+1];
-      }
-      if(strcmp(stock[27].name, " ") != 0)
-        strcpy(stock[27].name, " ");
+    if(from == 'S'){
+      stock.flipped[stock.flipCards] = stock.pile[stock.pileCards-1];
+      stock.flipCards++;
+      stock.pileCards--;
+    } else if(from == 'D'){
+      hold = stock.flipped[stock.flipCards-1];
+      stock.flipCards--;
     } else if(from == '1'){
       hold = tab1.cards[tab1.numCards-1];
       tab1.numCards--;
@@ -253,13 +266,7 @@ void game(){
     }
 
     //make move
-    if(to == 'S'){
-      for(int i = 27; i >= 0; i--){
-        if(strcmp(stock[i].name, " ") != 0){
-          stock[i-1] = hold;
-        }
-      }
-    } else if(to == '1'){
+    if(to == '1'){
       tab1.cards[tab1.numCards] = hold;
       tab1.numCards++;
     } else if(to == '2'){
@@ -303,6 +310,8 @@ void game(){
 int main() {
   srand(time(0));
 
+  stock.pileCards = 24; stock.flipCards = 0;
+
   tab1.numCards = 1;  tab1.numInvCards = 0;
   tab2.numCards = 2;  tab2.numInvCards = 1;
   tab3.numCards = 3;  tab3.numInvCards = 2;
@@ -331,27 +340,6 @@ int main() {
   aceH.color=0;
   aceC.color=1;
   aceS.color=1;
-
-  struct Card oneD;
-  struct Card oneH;
-  struct Card oneC;
-  struct Card oneS;
-  strcpy(oneD.name, "One of D");
-  strcpy(oneH.name, "One of H");
-  strcpy(oneC.name, "One of C");
-  strcpy(oneS.name, "One of S");
-  oneD.val=1;
-  oneH.val=1;
-  oneC.val=1;
-  oneS.val=1;
-  oneD.suit='D';
-  oneH.suit='H';
-  oneC.suit='C';
-  oneS.suit='S';
-  oneD.color=0;
-  oneH.color=0;
-  oneC.color=1;
-  oneS.color=1;
 
   struct Card twoD;
   struct Card twoH;
@@ -606,50 +594,49 @@ int main() {
   kinS.color=1;
 
   deck[0] = aceD;  deck[1] = aceH;  deck[2] = aceC; deck[3] = aceS;
-  deck[4] = oneD;  deck[5] = oneH;  deck[6] = oneC; deck[7] = oneS;
-  deck[8] = twoD;  deck[9] = twoH;  deck[10] = twoC; deck[11] = twoS;
-  deck[12] = thrD;  deck[13] = thrH;  deck[14] = thrC; deck[15] = thrS;
-  deck[16] = fouD;  deck[17] = fouH;  deck[18] = fouC; deck[19] = fouS;
-  deck[20] = fivD;  deck[21] = fivH;  deck[22] = fivC; deck[23] = fivS;
-  deck[24] = sixD;  deck[25] = sixH;  deck[26] = sixC; deck[27] = sixS;
-  deck[28] = sevD;  deck[29] = sevH;  deck[30] = sevC; deck[31] = sevS;
-  deck[32] = eigD;  deck[33] = eigH;  deck[34] = eigC; deck[35] = eigS;
-  deck[36] = ninD;  deck[37] = ninH;  deck[38] = ninC; deck[39] = ninS;
-  deck[40] = tenD;  deck[41] = tenH;  deck[42] = tenC; deck[43] = tenS;
-  deck[44] = jacD;  deck[45] = jacH;  deck[46] = jacC; deck[47] = jacS;
-  deck[48] = queD;  deck[49] = queH;  deck[50] = queC; deck[51] = queS;
-  deck[52] = kinD;  deck[53] = kinH;  deck[54] = kinC; deck[55] = kinS;
+  deck[4] = twoD;  deck[5] = twoH;  deck[6] = twoC; deck[7] = twoS;
+  deck[8] = thrD;  deck[9] = thrH;  deck[10] = thrC; deck[11] = thrS;
+  deck[12] = fouD;  deck[13] = fouH;  deck[14] = fouC; deck[15] = fouS;
+  deck[16] = fivD;  deck[17] = fivH;  deck[18] = fivC; deck[19] = fivS;
+  deck[20] = sixD;  deck[21] = sixH;  deck[22] = sixC; deck[23] = sixS;
+  deck[24] = sevD;  deck[25] = sevH;  deck[26] = sevC; deck[27] = sevS;
+  deck[28] = eigD;  deck[29] = eigH;  deck[30] = eigC; deck[31] = eigS;
+  deck[32] = ninD;  deck[33] = ninH;  deck[34] = ninC; deck[35] = ninS;
+  deck[36] = tenD;  deck[37] = tenH;  deck[38] = tenC; deck[39] = tenS;
+  deck[40] = jacD;  deck[41] = jacH;  deck[42] = jacC; deck[43] = jacS;
+  deck[44] = queD;  deck[45] = queH;  deck[46] = queC; deck[47] = queS;
+  deck[48] = kinD;  deck[49] = kinH;  deck[50] = kinC; deck[51] = kinS;
 
   //shuffle cards
   for(int i = 0; i < 100000; i++){
-    int index = rand() % 56;
-    int index2 = rand() % 56;
+    int index = rand() % 52;
+    int index2 = rand() % 52;
     struct Card temp = deck[index];
     deck[index] = deck[index2];
     deck[index2] = temp;
   }
 
   int j = 0;
-  //queue 28 in Stock
-  for(; j < 28; j++){
-    stock[j] = deck[j];
+  //queue 24 in Stock
+  for(; j < 24; j++){
+    stock.pile[j] = deck[j];
   }
 
   //queue each tableau row
-  tab1.cards[0] = deck[28];
+  tab1.cards[0] = deck[24];
   j++;
-  for(; j < 31; j++)
-  { tab2.cards[j-29] = deck[j]; }
+  for(; j < 27; j++)
+  { tab2.cards[j-25] = deck[j]; }
+  for(; j < 30; j++)
+  { tab3.cards[j-27] = deck[j]; }
   for(; j < 34; j++)
-  { tab3.cards[j-31] = deck[j]; }
-  for(; j < 38; j++)
-  { tab4.cards[j-34] = deck[j]; }
-  for(; j < 43; j++)
-  { tab5.cards[j-38] = deck[j]; }
-  for(; j < 49; j++)
-  { tab6.cards[j-43] = deck[j]; }
-  for(; j < 56; j++)
-  { tab7.cards[j-49] = deck[j]; }
+  { tab4.cards[j-30] = deck[j]; }
+  for(; j < 39; j++)
+  { tab5.cards[j-34] = deck[j]; }
+  for(; j < 45; j++)
+  { tab6.cards[j-39] = deck[j]; }
+  for(; j < 52; j++)
+  { tab7.cards[j-45] = deck[j]; }
 
   game();
 }
